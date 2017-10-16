@@ -13,6 +13,9 @@ lazy val root = (project in file(".")).
 
     libraryDependencies ++= Seq(
       scalaTest % Test,
-      sparkCore
+      "org.scala-lang" % "scala-library" % "2.11.8",
+      "org.apache.hadoop" % "hadoop-hdfs" % "2.7.3",
+      "org.apache.hadoop" % "hadoop-common" % "2.7.3",
+      "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "2.7.3"
     )
   )
