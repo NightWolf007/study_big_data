@@ -8,7 +8,7 @@ import org.apache.hadoop.io._
 import org.apache.hadoop.mapred._
 import org.apache.hadoop.util._
  
-object WordCount {
+object Main {
  
   class Map extends MapReduceBase with Mapper[LongWritable, Text, Text, IntWritable] {
     private final val one = new IntWritable(1)
