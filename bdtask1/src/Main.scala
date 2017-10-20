@@ -23,7 +23,7 @@ object Main extends App {
   job.setReducerClass(classOf[IPReducer])
 
   job.setMapOutputKeyClass(classOf[Text])
-  job.setMapOutputValueClass(classOf[CompositeWriteable])
+  job.setMapOutputValueClass(classOf[CompositeWritable])
   job.setOutputKeyClass(classOf[Text])
   job.setOutputValueClass(classOf[Text])
 

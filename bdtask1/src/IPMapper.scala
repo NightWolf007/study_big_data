@@ -41,7 +41,7 @@ class IPMapper extends IPMapper.Base {
  * Static fields and type definitions for IPMapper class.
  */
 object IPMapper {
-  type Base = Mapper[Any, Text, Text, CompositeWriteable]
+  type Base = Mapper[Any, Text, Text, CompositeWritable]
 
   /**
    * Reusable Writable for texts.
@@ -50,7 +50,7 @@ object IPMapper {
   /**
    * Reusable Writeable for composite values.
    */
-  val composite = new CompositeWriteable
+  val composite = new CompositeWritable
 
   /**
    * Log line format.

@@ -1,71 +1,51 @@
-// import org.apache.hadoop.io._
-// import org.apache.hadoop.mrunit.mapreduce._
+import org.apache.hadoop.io._
+import org.apache.hadoop.mrunit.mapreduce._
 
-// import org.scalatest.FlatSpec
+import org.scalatest.FlatSpec
 
-// import scala.collection.JavaConverters._
+import scala.collection.JavaConverters._
 
-// class Test extends FlatSpec {
-//   val mapper = new BrowserMapper
-//   val reducer = new BrowserReducer
+class Test extends FlatSpec {
+  val mapper = new IPMapper
+  val combiner = new IPCombiner
+  val reducer = new IPReducer
 
-//   def mapDriver = MapDriver.newMapDriver(mapper)
-//   def reduceDriver = ReduceDriver.newReduceDriver(reducer)
+  def mapDriver = MapDriver.newMapDriver(mapper)
+  def combineDriver = ReduceDriver.newReduceDriver(combiner)
+  def reduceDriver = ReduceDriver.newReduceDriver(reducer)
 
-//   val testStrings = io.Source.fromFile("testlog.log").getLines.toArray
+  val testStrings = io.Source.fromFile("testlog.log").getLines.toArray
 
-//   "The BrowserMapper" should "recognize Firefox browser" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text(testStrings(0)))
-//     suiteMapDriver.withOutput(new Text("Firefox"), new IntWritable(1))
-//     suiteMapDriver.runTest()
-//   }
+  "The IPMapper" should "return bytes" in {
+    val suiteMapDriver = mapDriver
+    suiteMapDriver.withInput(new Text(""), new Text(testStrings(0)))
+    suiteMapDriver.withOutput(new Text("178.7.31.65"), new CompositeWritable(1, 10100))
+    suiteMapDriver.runTest()
+  }
 
-//   "The BrowserMapper" should "recognize Thunderbird browser" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text(testStrings(1)))
-//     suiteMapDriver.withOutput(new Text("Thunderbird"), new IntWritable(1))
-//     suiteMapDriver.runTest()
-//   }
+  "The IPMapper" should "ignore invalid lines" in {
+    val suiteMapDriver = mapDriver
+    suiteMapDriver.withInput(new Text(""), new Text("invalid string"))
+    suiteMapDriver.runTest()
+  }
 
-//   "The BrowserMapper" should "recognize Edge browser" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text(testStrings(2)))
-//     suiteMapDriver.withOutput(new Text("Edge"), new IntWritable(1))
-//     suiteMapDriver.runTest()
-//   }
+  "The IPCombiner" should "return requests count and bytes count" in {
+    val suiteCombineDriver = combineDriver
+    suiteCombineDriver.withInput(
+      new Text("178.7.31.65"),
+      List(new CompositeWritable(3, 10100), new CompositeWritable(5, 4000)).asJava
+    )
+    suiteCombineDriver.withOutput(new Text("178.7.31.65"), new CompositeWritable(8, 14100))
+    suiteCombineDriver.runTest()
+  }
 
-//   "The BrowserMapper" should "recognize Chromium browser" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text(testStrings(3)))
-//     suiteMapDriver.withOutput(new Text("Chromium"), new IntWritable(1))
-//     suiteMapDriver.runTest()
-//   }
-
-//   "The BrowserMapper" should "recognize Safari browser" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text(testStrings(4)))
-//     suiteMapDriver.withOutput(new Text("Safari"), new IntWritable(1))
-//     suiteMapDriver.runTest()
-//   }
-
-//   "The BrowserMapper" should "recognize Other browser" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text(testStrings(5)))
-//     suiteMapDriver.withOutput(new Text("Other"), new IntWritable(1))
-//     suiteMapDriver.runTest()
-//   }
-
-//   "The BrowserMapper" should "recognize nothing" in {
-//     val suiteMapDriver = mapDriver
-//     suiteMapDriver.withInput(new Text(""), new Text("invalid string"))
-//     suiteMapDriver.runTest()
-//   }
-
-//   "The BrowserReducer" should "sum all integers" in {
-//     val suiteReduceDriver = reduceDriver
-//     suiteReduceDriver.withInput(new Text("Chromium"), List(new IntWritable(2), new IntWritable(4)).asJava)
-//     suiteReduceDriver.withOutput(new Text("Chromium"), new IntWritable(6))
-//     suiteReduceDriver.runTest()
-//   }
-// }
+  "The IPReducer" should "return average bytes and total bytes as text" in {
+    val suiteReduceDriver = reduceDriver
+    suiteReduceDriver.withInput(
+      new Text("178.7.31.65"),
+      List(new CompositeWritable(3, 10100), new CompositeWritable(2, 4000)).asJava
+    )
+    suiteReduceDriver.withOutput(new Text("178.7.31.65"), new Text("2820.0,14100"))
+    suiteReduceDriver.runTest()
+  }
+}

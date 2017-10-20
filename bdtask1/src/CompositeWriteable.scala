@@ -4,10 +4,10 @@ import java.io.DataOutput
 import org.apache.hadoop.io._
 
 /**
- * Provides Writeable implementation.
+ * Provides Writable implementation.
  * Can store two values.
  */
-class CompositeWriteable(var val1: Int, var val2: Int) extends Writable {
+class CompositeWritable(var val1: Int, var val2: Int) extends Writable {
   def this() = this(0, 0)
 
   def set(val1: Int, val2: Int) {
@@ -32,4 +32,9 @@ class CompositeWriteable(var val1: Int, var val2: Int) extends Writable {
   }
 
   override def toString(): String = val1.toString + "," + val2.toString
+
+  override def equals(o: Any) = o match {
+    case that: CompositeWritable => that.val1.equals(this.val1) && that.val2.equals(this.val2)
+    case _ => false
+  }
 }

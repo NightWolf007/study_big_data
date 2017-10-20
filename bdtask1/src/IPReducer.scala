@@ -12,12 +12,15 @@ class IPReducer extends IPReducer.Base {
 
   val logger = Logger.getLogger(classOf[IPReducer])
 
-  override def reduce(key: Text, values: java.lang.Iterable[CompositeWriteable], context: Base#Context): Unit = {
+  override def reduce(key: Text, values: java.lang.Iterable[CompositeWritable], context: Base#Context): Unit = {
     import scala.collection.JavaConverters._
 
-    val composite_values = values.asScala.toList
-    val requests_count = composite_values.map(_.getFirst).sum
-    val bytes_count = composite_values.map(_.getSecond).sum
+    var requests_count = 0
+    var bytes_count = 0
+    values.forEach { value =>
+      requests_count += value.getFirst
+      bytes_count += value.getSecond
+    }
     val average: Double = bytes_count / requests_count
 
     logger.info("IP: " + key + " - " + average + " - " + bytes_count + " - ")
@@ -31,7 +34,7 @@ class IPReducer extends IPReducer.Base {
  * Static fields and type definitions for IPReducer class.
  */
 object IPReducer {
-  type Base = Reducer[Text, CompositeWriteable, Text, Text]
+  type Base = Reducer[Text, CompositeWritable, Text, Text]
 
   /**
    * Reusable Writeable for text.
