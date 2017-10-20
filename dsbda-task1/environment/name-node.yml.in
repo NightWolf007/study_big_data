@@ -1,0 +1,10 @@
+  namenode:
+    image: 'kiwenlau/hadoop:1.0'
+    container_name: hadoop-master
+    volumes:
+      - ./startup.sh:/usr/bin/startup.sh:ro
+    ports:
+     - '50070:50070'
+     - '8088:8088'
+    command: startup.sh @SLAVES_COUNT@ master
+    stop_signal: SIGKILL

@@ -1,0 +1,7 @@
+  datanode@INDEX@:
+    image: 'kiwenlau/hadoop:1.0'
+    container_name: hadoop-slave@INDEX@
+    volumes:
+      - ./startup.sh:/usr/bin/startup.sh:ro
+    command: startup.sh @SLAVES_COUNT@ slave
+    stop_signal: SIGKILL
