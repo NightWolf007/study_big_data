@@ -40,7 +40,7 @@ lazy val root = (project in file(".")).
 
     scalacOptions += "-target:jvm-1.8",
     javacOptions in (Compile, compile) ++= Seq("-source", "1.8", "-target", "1.8", "-g:lines"),
-    mainClass in (Compile,run) := Some("WordCount"),
+    mainClass in (Compile,run) := Some("BDTask"),
     crossPaths := false,
     autoScalaLibrary := false
   )
