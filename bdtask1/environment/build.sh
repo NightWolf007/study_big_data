@@ -4,7 +4,7 @@
 git clone https://github.com/kiwenlau/hadoop-cluster-docker ||
 exit 1
 
-(cd 'hadoop-cluster-docker' && git reset --hard @ && git checkout master) || exit 1
+(cd 'hadoop-cluster-docker' && git reset --hard origin/master && git checkout master) || exit 1
 
 sed -e 's/14.04/16.04/' \
 -e 's/openjdk-7-jdk/openjdk-8-jdk/' \
