@@ -1,0 +1,10 @@
+  cassandra1:
+    image: cassandra
+    environment:
+      - MAX_HEAP_SIZE=1g
+      - HEAP_NEWSIZE=1g
+    volumes:
+      - ./cassandra-config:/host
+    command: /host/init.sh master
+    stop_signal: SIGINT
+    mem_limit: 2g
