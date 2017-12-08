@@ -60,14 +60,19 @@ object Main extends App {
     client.connect()
 
     println("Connected to Twitter")
-    while (!client.isDone()) {
-      println("NYAN")
-      val msg = queue.take()
-      println(msg)
-      timestampRegex.findFirstMatchIn(msg)
-                    .flatMap(_.subgroups.headOption)
-                    .foreach(time => producer.send(new ProducerRecord[Nothing, String](topic, time)))
-    }
+    // while (!client.isDone()) {
+    //   val msg = queue.take()
+    //   println(msg)
+    //   timestampRegex.findFirstMatchIn(msg)
+    //                 .flatMap(_.subgroups.headOption)
+    //                 .foreach(time => producer.send(new ProducerRecord[Nothing, String](topic, time)))
+    // }
+
+    producer.send(new ProducerRecord[Nothing, String](topic, "1512760254796"))
+    producer.send(new ProducerRecord[Nothing, String](topic, "1512760254896"))
+    producer.send(new ProducerRecord[Nothing, String](topic, "1512760255796"))
+    producer.send(new ProducerRecord[Nothing, String](topic, "1512760256796"))
+    producer.send(new ProducerRecord[Nothing, String](topic, "1512760256796"))
 
     if (client.isDone()) {
       println("Twitter Client connection closed unexpectedly: " + client.getExitEvent.getMessage)

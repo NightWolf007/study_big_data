@@ -58,3 +58,73 @@ You can take a look on the results after the job execution.
 `./run.sh` script will automaticly print results of the execultion onto your screen.
 
 [Job result.](bdtask1/screenshots/job_result.png)
+
+
+# Task 2
+
+## Condition
+
+### Data
+
+* Input data — [Twitter Public Stream Messages](https://developer.twitter.com/en/docs/tweets/filter-realtime/guides/streaming-message-types)
+* Output data - Count of messages with keyword "bitcoin" per minute
+
+### Technologies
+
+* Data loading - Apache Kafka
+* Data storage - Apache Cassandra
+* Data processing - Apache Spark Streaming
+
+### Report contains
+
+* Source code
+* Screenshot of unit test output
+* Screenshot of job output
+* Deployment manual
+* Architecture diagram
+
+## Architecture
+
+Kafka-producer service receives messages from twitter and sends timestamps to Apache Kafka.
+Kafka-cassandra service receives timestamps from Apache Kafka and writes it into Apache Cassandra.
+Spark-calculator app fetches timestamps from Apache Cassandra and calculates count of messages per second with Spark Streaming.
+
+[Architecture diagram.](bdtask2/screenshots/architecture.png)
+
+## Deployment
+
+### Requirements
+
+* Linux-based OS
+* `docker` and `docker-compose` installed
+* `jdk8` and `sbt` installed
+
+### Configuration
+
+You need to have prepared Twitter application with `Consumer Key` and `Access Token`
+
+Then you just need to export necessary enivronment variables.
+```
+export T_CONSUMER_KEY="Your Consumer Key"
+export T_CONSUMER_SECRET="Your Consumer Secret"
+export T_TOKEN="Your Access Token"
+export T_SECRET="Your Access Token Secret"
+```
+
+### Build
+
+You need to run command `sbt assembly` from `spark-calculator` directory.
+Unit-tests will be passed on project's building.
+
+[Unit-tests results](bdtask2/screenshots/tests.png)
+
+### Run system
+
+To run system you need just to run bash script from the project's directory `./run.sh`.
+This script will start: Apache Kafka, Apache Cassandra, Apache Spark, Kafka-producer service and Kafka-cassandra service.
+
+### Run job
+
+To run job you need to run bash script `./spark-calculator/run.sh`
+
+[Job's output](bdtask2/screenshots/job_output.png)

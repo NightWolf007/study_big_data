@@ -23,7 +23,7 @@ class Test extends FlatSpec with Eventually {
 
     val eventCountsStream = Main.calculate(ssc, events)
 
-    val eventCountsBuffer = new ListBuffer[Int]()
+    val eventCountsBuffer = new ListBuffer[(Long, Int)]()
     eventCountsStream.foreachRDD {
       eventCountsBuffer ++= _.collect
     }
@@ -34,9 +34,9 @@ class Test extends FlatSpec with Eventually {
 
     eventually {
       val eventCounts = eventCountsBuffer.toList
-      assert(eventCounts.contains(3))
-      assert(eventCounts.contains(2))
-      assert(eventCounts.contains(1))
+      assert(eventCounts.contains((1230000L, 3)))
+      assert(eventCounts.contains((7890000L, 2)))
+      assert(eventCounts.contains((4560000L, 1)))
     }
   }
 }

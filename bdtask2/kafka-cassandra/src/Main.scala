@@ -51,9 +51,9 @@ object Main extends App {
        * Fetch records from kafka and write them into cassandra in one batch
        */
       val records = consumer.poll(100)
-      println(records(0))
       val batch = new BatchStatement
       for (record <- records.asScala) {
+        println(record.value)
         batch.add(new BoundStatement(metricInsertStatement).bind(UUID.randomUUID, new Date(record.value.toLong)))
       }
       cassandraSession.execute(batch)

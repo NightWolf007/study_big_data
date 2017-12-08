@@ -71,7 +71,7 @@ object Main {
 
     val eventCountsStream = calculate(ssc, events)
 
-    val eventCountsBuffer = new ListBuffer[Int]()
+    val eventCountsBuffer = new ListBuffer[(Long, Int)]()
     eventCountsStream.foreachRDD {
       eventCountsBuffer ++= _.collect
     }
@@ -91,7 +91,7 @@ object Main {
    * events - List of timestamps
    * Returns Spark stream
    */
-  def calculate(ssc: StreamingContext, events: List[Long]):DStream[Int] = {
+  def calculate(ssc: StreamingContext, events: List[Long]):DStream[(Long, Int)] = {
     val period = 5
     println(events)
     println(events.groupBy(e => (e / 1000 / period).toInt).toList)
@@ -103,6 +103,6 @@ object Main {
                      }
     val queue = rdds.foldLeft(new Queue[RDD[List[Long]]])(_ += _)
     val stream = ssc.queueStream(queue)
-    return stream.map(_.length)
+    return stream.map(x => (x(0), x.length))
   }
 }
