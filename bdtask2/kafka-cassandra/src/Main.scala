@@ -13,11 +13,22 @@ import com.datastax.driver.core._
  * Main application object.
  */
 object Main extends App {
+  val defaultKafkaServer = "0.0.0.0:9092"
+  val defaultCassandraHost = "0.0.0.0"
+  val defaultCassandraPort = 9042
+
   val topic = "twitter"
 
-  def run() {
+  /**
+   * Main function
+   * kafkaServer - host and port of kafka server (default: 0.0.0.0:9092)
+   * cassandraHost - host of cassandra server (default: 0.0.0.0)
+   * cassandraPort - port of cassandra server (default: 9042)
+   */
+  def run(kafkaServer: String = defaultKafkaServer, cassandraHost: String = defaultCassandraHost,
+          cassandraPort: Int = defaultCassandraPort) {
     val props = new Properties
-    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092")
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer)
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-cassandra")
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true")
     props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000")
@@ -28,7 +39,7 @@ object Main extends App {
 
     val cassandraSession = Cluster
       .builder
-      .addContactPointsWithPorts(new java.net.InetSocketAddress("0.0.0.0", 9042))
+      .addContactPointsWithPorts(new java.net.InetSocketAddress(cassandraHost, cassandraPort))
       .build
       .connect("BDTASK")
 
@@ -36,7 +47,11 @@ object Main extends App {
 
     consumer.subscribe(Arrays.asList(topic))
     while(true) {
+      /**
+       * Fetch records from kafka and write them into cassandra in one batch
+       */
       val records = consumer.poll(100)
+      println(records(0))
       val batch = new BatchStatement
       for (record <- records.asScala) {
         batch.add(new BoundStatement(metricInsertStatement).bind(UUID.randomUUID, new Date(record.value.toLong)))
@@ -45,5 +60,10 @@ object Main extends App {
     }
   }
 
-  run()
+  args.length match {
+    case 0 => run()
+    case 1 => run(args(0))
+    case 2 => run(args(0), args(1))
+    case _ => run(args(0), args(1), args(2).toInt)
+  }
 }

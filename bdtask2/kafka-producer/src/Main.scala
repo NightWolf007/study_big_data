@@ -27,9 +27,17 @@ object Main extends App {
 
   var timestampRegex = "\"timestamp_ms\":\"(\\d+)\"".r
 
+  /**
+   * Main function
+   * consumerKey - twitter consumer key
+   * consumerSecret - twitter consumer secret
+   * token - twitter token
+   * secret - twitter secret
+   * kafkaServer - host and port of kafka server (default: 0.0.0.0:9092)
+   */
   def run(consumerKey: String, consumerSecret: String, token: String, secret: String, kafkaServer: String = defaultKafkaServer) {
     val props = new Properties
-    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "0.0.0.0:9092")
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer)
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer")
 
@@ -51,20 +59,27 @@ object Main extends App {
 
     client.connect()
 
+    println("Connected to Twitter")
     while (!client.isDone()) {
+      println("NYAN")
       val msg = queue.take()
+      println(msg)
       timestampRegex.findFirstMatchIn(msg)
                     .flatMap(_.subgroups.headOption)
                     .foreach(time => producer.send(new ProducerRecord[Nothing, String](topic, time)))
-    } 
+    }
 
     if (client.isDone()) {
-      println("Twitter Client connection closed unexpectedly: " + client.getExitEvent.getMessage);
+      println("Twitter Client connection closed unexpectedly: " + client.getExitEvent.getMessage)
     }
 
     client.stop()
     producer.close()
   }
 
-  run(args(0), args(1), args(2), args(3))
+  if (args.length >= 5) {
+    run(args(0), args(1), args(2), args(3), args(4))
+  } else {
+    run(args(0), args(1), args(2), args(3))
+  }
 }

@@ -16,13 +16,40 @@ import org.apache.spark.streaming.dstream.DStream
 
 /**
  * Main application object.
+ * Calculates count of twitter posts per minute
  */
 object Main {
+  val defaultCassandraHost = "cassandra"
+  val defaultCassandraPort = 9042
+  val defaultSparkMaster = "local[2]"
 
-  def main(args: Array[String]) { 
+  /**
+   * Main function
+   * Args: [cassandraHost, cassandraPort, sparkMaster]
+   * cassandraHost - host of cassandra server (default: 0.0.0.0)
+   * cassandraPort - port of cassandra server (default: 9042)
+   * sparkMaster - host of spark master server (default: local[2])
+   */
+  def main(args: Array[String]) {
+    args.length match {
+      case 0 => run()
+      case 1 => run(args(0))
+      case 2 => run(args(0), args(1).toInt)
+      case _ => run(args(0), args(1).toInt, args(2))
+    }
+  }
+
+  /**
+   * Run function starts application
+   * cassandraHost - host of cassandra server (default: 0.0.0.0)
+   * cassandraPort - port of cassandra server (default: 9042)
+   * sparkMaster - host of spark master server (default: local[2])
+   */
+  def run(cassandraHost: String = defaultCassandraHost, cassandraPort: Int = defaultCassandraPort,
+          sparkMaster: String = defaultSparkMaster) {
     val cassandraSession = Cluster
       .builder
-      .addContactPointsWithPorts(new java.net.InetSocketAddress("cassandra", 9042))
+      .addContactPointsWithPorts(new java.net.InetSocketAddress(cassandraHost, cassandraPort))
       .build
       .connect("BDTASK")
 
@@ -37,7 +64,7 @@ object Main {
     cassandraSession.close()
 
     val sparkConf = new SparkConf().setAppName("SparkCalculator")
-                                   .setMaster("local[2]")
+                                   .setMaster(sparkMaster)
                                    .set("spark.shuffle.service.enabled", "true")
                                    .set("spark.dynamicAllocation.enabled", "true")
     val ssc = new StreamingContext(sparkConf, Seconds(1))
@@ -58,6 +85,12 @@ object Main {
     println("===================================================")
   }
 
+  /**
+   * Calculate function calculates events count per minute
+   * ssc - Spark Streaming context
+   * events - List of timestamps
+   * Returns Spark stream
+   */
   def calculate(ssc: StreamingContext, events: List[Long]):DStream[Int] = {
     val period = 5
     println(events)
