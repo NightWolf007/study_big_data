@@ -9,6 +9,7 @@ import org.apache.kafka.clients.consumer._
 import com.datastax.driver.core._
 
 /**
+ * Kafka-Cassandra proxy daemon.
  * Main application object.
  */
 object Main extends App {
