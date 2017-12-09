@@ -29,11 +29,11 @@ object Main extends App {
 
   /**
    * Main function
-   * consumerKey - twitter consumer key
-   * consumerSecret - twitter consumer secret
-   * token - twitter token
-   * secret - twitter secret
-   * kafkaServer - host and port of kafka server (default: 0.0.0.0:9092)
+   * @param consumerKey twitter consumer key
+   * @param consumerSecret twitter consumer secret
+   * @param token twitter token
+   * @param secret twitter secret
+   * @param kafkaServer host and port of kafka server (default: 0.0.0.0:9092)
    */
   def run(consumerKey: String, consumerSecret: String, token: String, secret: String, kafkaServer: String = defaultKafkaServer) {
     val props = new Properties
@@ -62,7 +62,7 @@ object Main extends App {
     println("Connected to Twitter")
     while (!client.isDone()) {
       val msg = queue.take()
-      println(msg)
+      // println(msg)
       timestampRegex.findFirstMatchIn(msg)
                     .flatMap(_.subgroups.headOption)
                     .foreach(time => producer.send(new ProducerRecord[Nothing, String](topic, time)))

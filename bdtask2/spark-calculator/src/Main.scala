@@ -26,9 +26,9 @@ object Main {
   /**
    * Main function
    * Args: [cassandraHost, cassandraPort, sparkMaster]
-   * cassandraHost - host of cassandra server (default: 0.0.0.0)
-   * cassandraPort - port of cassandra server (default: 9042)
-   * sparkMaster - host of spark master server (default: local[2])
+   * @param cassandraHost host of cassandra server (default: 0.0.0.0)
+   * @param cassandraPort port of cassandra server (default: 9042)
+   * @param sparkMaster host of spark master server (default: local[2])
    */
   def main(args: Array[String]) {
     args.length match {
@@ -41,9 +41,9 @@ object Main {
 
   /**
    * Run function starts application
-   * cassandraHost - host of cassandra server (default: 0.0.0.0)
-   * cassandraPort - port of cassandra server (default: 9042)
-   * sparkMaster - host of spark master server (default: local[2])
+   * @param cassandraHost host of cassandra server (default: 0.0.0.0)
+   * @param cassandraPort port of cassandra server (default: 9042)
+   * @param sparkMaster host of spark master server (default: local[2])
    */
   def run(cassandraHost: String = defaultCassandraHost, cassandraPort: Int = defaultCassandraPort,
           sparkMaster: String = defaultSparkMaster) {
@@ -87,9 +87,9 @@ object Main {
 
   /**
    * Calculate function calculates events count per minute
-   * ssc - Spark Streaming context
-   * events - List of timestamps
    * Returns Spark stream
+   * @param ssc Spark Streaming context
+   * @param events List of timestamps
    */
   def calculate(ssc: StreamingContext, events: List[Long]):DStream[(Long, Int)] = {
     val period = 5

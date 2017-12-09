@@ -21,9 +21,9 @@ object Main extends App {
 
   /**
    * Main function
-   * kafkaServer - host and port of kafka server (default: 0.0.0.0:9092)
-   * cassandraHost - host of cassandra server (default: 0.0.0.0)
-   * cassandraPort - port of cassandra server (default: 9042)
+   * @param kafkaServer - host and port of kafka server (default: 0.0.0.0:9092)
+   * @param cassandraHost - host of cassandra server (default: 0.0.0.0)
+   * @param cassandraPort - port of cassandra server (default: 9042)
    */
   def run(kafkaServer: String = defaultKafkaServer, cassandraHost: String = defaultCassandraHost,
           cassandraPort: Int = defaultCassandraPort) {
